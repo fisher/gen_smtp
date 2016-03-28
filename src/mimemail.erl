@@ -240,13 +240,17 @@ convert(To, From, Data) ->
 
 
 decode_component(Headers, Body, MimeVsn, Options) when MimeVsn =:= <<"1.0">> ->
-	case parse_content_disposition(get_header_value(<<"Content-Disposition">>, Headers)) of
-		{Disposition, DispositionParams} ->
-			ok;
-		_ -> % defaults
-			Disposition = <<"inline">>,
-			DispositionParams = []
-	end,
+    %% WTF is going on here?
+    {Disposition, DispositionParams} =
+        case parse_content_disposition(
+               get_header_value(<<"Content-Disposition">>, Headers))
+        of
+            Smt when is_tuple(Smt), size(Smt) == 2 ->
+                Smt;
+            _ -> % defaults
+                { _Dispostion = <<"inline">>,
+                  _DispositionParams = [] }
+        end,
 
 	case parse_content_type(get_header_value(<<"Content-Type">>, Headers)) of
 		{<<"multipart">>, SubType, Parameters} ->
@@ -254,23 +258,46 @@ decode_component(Headers, Body, MimeVsn, Options) when MimeVsn =:= <<"1.0">> ->
 				undefined ->
 					erlang:error(no_boundary);
 				Boundary ->
-					% io:format("this is a multipart email of type:  ~s and boundary ~s~n", [SubType, Boundary]),
-					Parameters2 = [{<<"content-type-params">>, Parameters}, {<<"disposition">>, Disposition}, {<<"disposition-params">>, DispositionParams}],
-					{<<"multipart">>, SubType, Headers, Parameters2, split_body_by_boundary(Body, list_to_binary(["--", Boundary]), MimeVsn, Options)}
+                    %% io:format("this is a multipart email of type:  "
+                    %% "~s and boundary ~s~n", [SubType, Boundary]),
+					Parameters2 =
+                        [ {<<"content-type-params">>, Parameters},
+                          {<<"disposition">>, Disposition},
+                          {<<"disposition-params">>, DispositionParams} ],
+
+					{<<"multipart">>, SubType, Headers, Parameters2,
+                     split_body_by_boundary(Body,
+                                            list_to_binary(["--", Boundary]),
+                                            MimeVsn, Options)}
 			end;
 		{<<"message">>, <<"rfc822">>, Parameters} ->
 			{NewHeaders, NewBody} = parse_headers(Body),
-			Parameters2 = [{<<"content-type-params">>, Parameters}, {<<"disposition">>, Disposition}, {<<"disposition-params">>, DispositionParams}],
-			{<<"message">>, <<"rfc822">>, Headers, Parameters2, decode(NewHeaders, NewBody, Options)};
+			Parameters2 = [ {<<"content-type-params">>, Parameters},
+                            {<<"disposition">>, Disposition},
+                            {<<"disposition-params">>, DispositionParams} ],
+			{<<"message">>, <<"rfc822">>, Headers, Parameters2,
+             decode(NewHeaders, NewBody, Options)};
 		{Type, SubType, Parameters} ->
 			%io:format("body is ~s/~s~n", [Type, SubType]),
-			Parameters2 = [{<<"content-type-params">>, Parameters}, {<<"disposition">>, Disposition}, {<<"disposition-params">>, DispositionParams}],
-			{Type, SubType, Headers, Parameters2, decode_body(get_header_value(<<"Content-Transfer-Encoding">>, Headers), Body, proplists:get_value(<<"charset">>, Parameters), proplists:get_value(encoding, Options, none))};
+			Parameters2 = [ {<<"content-type-params">>, Parameters},
+                            {<<"disposition">>, Disposition},
+                            {<<"disposition-params">>, DispositionParams} ],
+			{Type, SubType, Headers, Parameters2,
+             decode_body(
+               get_header_value(<<"Content-Transfer-Encoding">>, Headers),
+               Body, proplists:get_value(<<"charset">>, Parameters),
+               proplists:get_value(encoding, Options, none))};
 		undefined -> % defaults
 			Type = <<"text">>,
 			SubType = <<"plain">>,
-			Parameters = [{<<"content-type-params">>, [{<<"charset">>, <<"us-ascii">>}]}, {<<"disposition">>, Disposition}, {<<"disposition-params">>, DispositionParams}],
-			{Type, SubType, Headers, Parameters, decode_body(get_header_value(<<"Content-Transfer-Encoding">>, Headers), Body)}
+			Parameters = [ {<<"content-type-params">>,
+                            [{<<"charset">>, <<"us-ascii">>}]},
+                           {<<"disposition">>, Disposition},
+                           {<<"disposition-params">>, DispositionParams}],
+			{Type, SubType, Headers, Parameters,
+             decode_body(
+               get_header_value(<<"Content-Transfer-Encoding">>, Headers),
+               Body)}
 	end;
 decode_component(_Headers, _Body, Other, _Options) ->
 	erlang:error({mime_version, Other}).
