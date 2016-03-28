@@ -322,13 +322,13 @@ handle_request({<<"AUTH">>, _Args}, #state{envelope = undefined, socket = Socket
 	socket:send(Socket, "503 Error: send EHLO first\r\n"),
 	{ok, State};
 handle_request({<<"AUTH">>, Args}, #state{socket = Socket, extensions = Extensions, envelope = Envelope, options = Options} = State) ->
-	case binstr:strchr(Args, $\s) of
-		0 ->
-			AuthType = Args,
-			Parameters = false;
-		Index ->
-			AuthType = binstr:substr(Args, 1, Index - 1),
-			Parameters = binstr:strip(binstr:substr(Args, Index + 1), left, $\s)
+    {AuthType, Parameters} =
+        case binstr:strchr(Args, $\s) of
+            0 ->
+                {_AuthType = Args, _Parameters = false};
+            Index ->
+                {_AuthType = binstr:substr(Args, 1, Index - 1),
+                 _Parameters = binstr:strip(binstr:substr(Args, Index + 1), left, $\s)}
 	end,
 
 	case has_extension(Extensions, "AUTH") of
