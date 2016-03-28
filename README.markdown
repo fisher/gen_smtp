@@ -1,6 +1,8 @@
 Mission
 =======
 
+[![Join the chat at https://gitter.im/fisher/gen_smtp](https://badges.gitter.im/fisher/gen_smtp.svg)](https://gitter.im/fisher/gen_smtp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Provide a generic Erlang SMTP server framework that can be extended via
 callback modules in the OTP style. A pure Erlang SMTP client is also included.
 The goal is to make it easy to send and receive email in Erlang without the
