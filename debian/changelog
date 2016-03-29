@@ -1,3 +1,20 @@
+erlang-gen-smtp (0.9.0.1) unstable; urgency=low
+
+  * oops, wrong dirname
+  * stop if yrl compilation fails
+  * supress erl console stdout in yrl comp
+  * build dep on erlang-parsetools (for yecc)
+  * forgot to add some files
+  * typo in build-deps
+  * satisfy edoc
+  * non-functional: small style fix
+  * too long lines reduced
+  * added dependency on ebin to yrl
+  * provided tests are passed
+  * added yecc compilation
+
+ -- Serge Rybalchenko <fisher@heim.in.ua>  Tue, 29 Mar 2016 15:37:31 +0300
+
 erlang-gen-smtp (0.9.0) unstable; urgency=medium
 
   * Initial release.
