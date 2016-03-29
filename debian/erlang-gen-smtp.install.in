@@ -1,2 +1,2 @@
-ebin/*.app  /usr/lib/erlang/lib/envx_track-{{VERSION}}/ebin
-ebin/*.beam /usr/lib/erlang/lib/envx_track-{{VERSION}}/ebin
+ebin/*.app  /usr/lib/erlang/lib/gen_smtp-{{VERSION}}/ebin
+ebin/*.beam /usr/lib/erlang/lib/gen_smtp-{{VERSION}}/ebin
