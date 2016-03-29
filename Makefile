@@ -15,6 +15,10 @@ HOSTNAME := $(shell hostname)
 ERL_SRC := $(wildcard src/*.erl)
 BEAMS   := $(patsubst src/%.erl, ebin/%.beam, $(ERL_SRC))
 
+YRL_SRC := $(wildcard src/*.yrl)
+YRL_ERL := $(patsubst src/%.yrl, src/%.erl, $(YRL_SRC))
+YRL_TGT := $(patsubst src/%.yrl, ebin/%.beam, $(YRL_SRC))
+
 .PHONY: html clean eunit dialyze all-tests
 
 ####################
@@ -38,7 +42,13 @@ ifdef TEST
 ERLC_OPTS := $(ERLC_OPTS), {d, 'TEST'}
 endif
 
-compile: ebin/$(APP).app $(BEAMS)
+compile: ebin/$(APP).app $(YRL_TGT) $(BEAMS)
+
+$(YRL_ERL): $(YRL_SRC)
+	erl -eval "yecc:file(\"$<\")." -s erlang halt
+
+$(YRL_TGT): $(YRL_ERL)
+	erlc -o ebin -I./include $(ERLC_OPTS) $<
 
 ####################
 # application compilation
@@ -98,4 +108,4 @@ shell: ebin/$(APP).app $(BEAMS)
 # cleanup
 clean:
 	rm -rf doc ebin $(DESTDIR)
-	rm -f *.o erl_crash.dump src/TAGS test/*.beam
+	rm -f *.o erl_crash.dump src/TAGS test/*.beam $(YRL_ERL)
