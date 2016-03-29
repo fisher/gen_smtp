@@ -1,0 +1,22 @@
+Source: erlang-gen-smtp
+Section: non-free/misc
+Priority: extra
+Maintainer: Serge Rybalchenko <serge.fisher@gmail.com>
+Build-Depends: debhelper, erlang-base, erlang-edoc, erlang-eunit
+ erlang-dev, erlang-tools
+Standards-Version: 3.9.3
+Homepage: https://github.com/fisher/gen_smtp
+Vcs-Browser: https://github.com/fisher/gen_smtp
+Vcs-Git: https://github.com/fisher/gen_smtp.git
+
+Package: erlang-gen-smtp
+Architecture: all
+Depends: erlang-base
+Description: gen_smtp application
+ Allows to send and receive mail over SMTP with TLS support.
+
+Package: erlang-gen-smtp-doc
+Architecture: all
+Description: gen_smtp documentation.
+ Contains generated HTML documentation for the gen_smtp source
+ code, if any.
