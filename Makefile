@@ -47,10 +47,12 @@ endif
 
 compile: ebin/$(APP).app $(YRL_TGT) $(BEAMS)
 
+####################
+# yecc comiplation
 $(YRL_ERL): $(YRL_SRC)
 	erl -eval "yecc:file(\"$<\")." -s erlang halt
 
-$(YRL_TGT): $(YRL_ERL)
+$(YRL_TGT): $(YRL_ERL) ebin
 	erlc -o ebin -I./include $(ERLC_OPTS) $<
 
 ####################
@@ -79,7 +81,7 @@ html:
 mktest: $(TBEAMS)
 
 $(TBEAMS): $(TST_SRC)
-	erlc -pa ebin -o test -I./include $(ERLC_OPTS) $< 
+	erlc -pa ebin -o test -I./include $(ERLC_OPTS) $<
 
 eunit: clean compile mktest
 	erl -noinput -pa ebin \
@@ -88,6 +90,8 @@ eunit: clean compile mktest
 	erl -noinput -pa ebin \
 		-eval 'ok=eunit:test({dir, "test"}, [verbose])' \
 		-s erlang halt
+
+test: eunit
 
 PLT = .dialyzer_plt
 DIALYZER_OPTS = -Wunmatched_returns -Werror_handling
