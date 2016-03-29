@@ -3,7 +3,7 @@ Section: non-free/misc
 Priority: extra
 Maintainer: Serge Rybalchenko <serge.fisher@gmail.com>
 Build-Depends: debhelper, erlang-base, erlang-edoc, erlang-eunit,
- erlang-dev, erlang-tools
+ erlang-dev, erlang-tools, erlang-parsetools
 Standards-Version: 3.9.3
 Homepage: https://github.com/fisher/gen_smtp
 Vcs-Browser: https://github.com/fisher/gen_smtp
