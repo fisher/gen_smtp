@@ -61,9 +61,11 @@ combine_rfc822_addresses_test_() ->
      {"Multiple addresses",
       fun() ->
               ?assertEqual(<<"john@doe.com, foo@bar.com">>,
-                           smtp_util:combine_rfc822_addresses([{undefined, "john@doe.com"}, {undefined, "foo@bar.com"}])),
+                           smtp_util:combine_rfc822_addresses(
+                             [{undefined, "john@doe.com"}, {undefined, "foo@bar.com"}])),
               ?assertEqual(<<"John <john@doe.com>, foo@bar.com">>,
-                           smtp_util:combine_rfc822_addresses([{"John", "john@doe.com"}, {undefined, "foo@bar.com"}]))
+                           smtp_util:combine_rfc822_addresses(
+                             [{"John", "john@doe.com"}, {undefined, "foo@bar.com"}]))
       end}
     ].
 
