@@ -50,7 +50,7 @@ compile: ebin/$(APP).app $(YRL_TGT) $(BEAMS)
 ####################
 # yecc comiplation
 $(YRL_ERL): $(YRL_SRC)
-	erl -noinput -eval "ok=yecc:file(\"$<\")." -s erlang halt
+	erl -noinput -eval "{ok,_}=yecc:file(\"$<\")." -s erlang halt
 
 $(YRL_TGT): $(YRL_ERL) ebin
 	erlc -o ebin -I./include $(ERLC_OPTS) $<
