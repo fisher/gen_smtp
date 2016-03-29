@@ -19,6 +19,9 @@ YRL_SRC := $(wildcard src/*.yrl)
 YRL_ERL := $(patsubst src/%.yrl, src/%.erl, $(YRL_SRC))
 YRL_TGT := $(patsubst src/%.yrl, ebin/%.beam, $(YRL_SRC))
 
+TST_SRC := $(wildcard test/*.erl)
+TBEAMS  := $(patsubst test/%.erl, test/%.beam, $(TST_SRC))
+
 .PHONY: html clean eunit dialyze all-tests
 
 ####################
@@ -53,7 +56,7 @@ $(YRL_TGT): $(YRL_ERL)
 ####################
 # application compilation
 ebin/%.beam: src/%.erl ebin
-	erlc -o ebin -I./include $(ERLC_OPTS) $<
+	erlc -pa ebin -o ebin -I./include $(ERLC_OPTS) $<
 
 ebin/$(APP).app: ebin src/$(APP).app.in
 	sed "s/{{VERSION}}/$(VERSION)/" src/$(APP).app.in > ebin/$(APP).app
@@ -73,10 +76,18 @@ html:
 
 ####################
 # eunit target
-eunit:
-	$(MAKE) TEST=y clean compile
+mktest: $(TBEAMS)
+
+$(TBEAMS): $(TST_SRC)
+	erlc -pa ebin -o test -I./include $(ERLC_OPTS) $< 
+
+eunit: clean compile mktest
 	erl -noinput -pa ebin \
-		-eval 'ok=eunit:test({application,$(APP)},[verbose]),halt()'
+		-eval 'ok=eunit:test({application,$(APP)},[verbose])' \
+		-s erlang halt
+	erl -noinput -pa ebin \
+		-eval 'ok=eunit:test({dir, "test"}, [verbose])' \
+		-s erlang halt
 
 PLT = .dialyzer_plt
 DIALYZER_OPTS = -Wunmatched_returns -Werror_handling
@@ -108,4 +119,4 @@ shell: ebin/$(APP).app $(BEAMS)
 # cleanup
 clean:
 	rm -rf doc ebin $(DESTDIR)
-	rm -f *.o erl_crash.dump src/TAGS test/*.beam $(YRL_ERL)
+	rm -f *.o erl_crash.dump src/TAGS test/*.beam $(YRL_ERL) $(TBEAMS)
