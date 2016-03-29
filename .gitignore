@@ -9,3 +9,4 @@ build
 /ebin
 src/smtp_rfc822_parse.erl
 deps/
+/doc

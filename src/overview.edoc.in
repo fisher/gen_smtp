@@ -1,0 +1,13 @@
+@author Andrew Thompson <andrew@hijacked.us>
+@copyright 2009-2011 Andrew Thompson <andrew@hijacked.us>
+@version {{VERSION}}
+@title gen_smtp application.
+@doc == Contents ==
+
+<ol>
+ <li>{@section Summary}</li>
+</ol>
+
+== Summary ==
+
+This is gen_smtp application without any documentation.
