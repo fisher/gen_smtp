@@ -1,5 +1,5 @@
 Source: erlang-gen-smtp
-Section: non-free/misc
+Section: devel
 Priority: extra
 Maintainer: Serge Rybalchenko <serge.fisher@gmail.com>
 Build-Depends: debhelper, erlang-base, erlang-edoc, erlang-eunit,
